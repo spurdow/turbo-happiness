@@ -22,13 +22,13 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		
         int numRow = 20;
-        int numCol = 2;
+        int numCol = 5;
 
         TableLayout tblLayout = (TableLayout) findViewById(R.id.tblLayout);
 
         for(int i = 0; i < numRow; i++) {
             HorizontalScrollView HSV = new HorizontalScrollView(this);
-            HSV.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.FILL_PARENT));
+            HSV.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
             TableRow tblRow = new TableRow(this);
             tblRow.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
