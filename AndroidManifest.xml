@@ -27,6 +27,7 @@
                   android:label="@string/app_name" />
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
         <activity android:name="LoginActivity"></activity>
+        <activity android:name="NavigationalShelfListViewActivity"></activity>
     </application>
 
 </manifest>

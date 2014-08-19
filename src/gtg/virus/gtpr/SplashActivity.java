@@ -75,7 +75,7 @@ public class SplashActivity extends Activity {
 			User user = Utilities.getUser(SplashActivity.this);
 			if(user == null){
 				// go to login
-				Intent i = new Intent(SplashActivity.this,  LoginActivity.class);
+				Intent i = new Intent(SplashActivity.this,  /*LoginActivity.class*/NavigationalShelfListViewActivity.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				startActivity(i);
 			}else{
