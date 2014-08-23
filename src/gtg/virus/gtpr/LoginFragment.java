@@ -116,7 +116,7 @@ public class LoginFragment extends Fragment{
 					mSession = session;
 
 						
-						final User muser = Utilities.getUser(LoginFragment.this.getActivity());
+						final User muser = Utilities.getUser(LoginFragment.this.getActivity().getApplicationContext());
 						if(muser != null)
 							Utilities.saveUser(LoginFragment.this.getActivity(), muser);
 
@@ -135,7 +135,7 @@ public class LoginFragment extends Fragment{
 
 										
 										if(LoginFragment.this.getActivity() != null && muser != null)
-											Utilities.saveUser(LoginFragment.this.getActivity() , muser);
+											Utilities.saveUser(LoginFragment.this.getActivity().getApplicationContext() , muser);
 
 									}
 									

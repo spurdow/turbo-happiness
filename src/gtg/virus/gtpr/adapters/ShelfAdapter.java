@@ -22,7 +22,6 @@ public class ShelfAdapter extends BaseAdapter {
 	
 	private LayoutInflater inflater = null;
 	
-		
 	
 	/**
 	 * @param mContext
@@ -65,9 +64,117 @@ public class ShelfAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
+
+		Shelf shelf = (Shelf) getItem(position);
+		
+	//	if(shelf == null) return null;
+		
 		if(convertView == null){
-			convertView = inflater.inflate(R.layout.shelf_row, null	);
-			convertView.setBackgroundResource(R.drawable.shelf);
+			if(shelf.getmView() == null){
+				convertView = inflater.inflate(R.layout.shelf_row, null	);
+				shelf.setmView(convertView);
+			}
+			
+			convertView = shelf.getmView();
+			int index = position % shelf.getMax();
+			Book book = shelf.getBook(index);
+	
+			
+			ViewHolder viewHolder = null;
+			
+			/**
+			 * custom code here
+			 */
+			///////////////////////////////////////
+			if(index == 0){
+				viewHolder = (ViewHolder) book.getTag();
+				if(viewHolder == null){
+					viewHolder = new ViewHolder();
+					View v = convertView.findViewById(R.id.shelf_1);
+					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
+					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
+					book.setTag(viewHolder);
+				}else{
+					viewHolder = (ViewHolder) book.getTag();
+				}
+				
+			}else if(index == 1){
+				viewHolder = (ViewHolder) book.getTag();
+				if(viewHolder == null){
+					viewHolder = new ViewHolder();
+					View v = convertView.findViewById(R.id.shelf_1);
+					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
+					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
+					book.setTag(viewHolder);
+				}else{
+					viewHolder = (ViewHolder) book.getTag();
+				}
+			}else if(index == 2){
+				viewHolder = (ViewHolder) book.getTag();
+				if(viewHolder == null){
+					viewHolder = new ViewHolder();
+					View v = convertView.findViewById(R.id.shelf_1);
+					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
+					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
+					book.setTag(viewHolder);
+				}else{
+					viewHolder = (ViewHolder) book.getTag();
+				}
+			}
+			
+			viewHolder.mTextView.setText(book.getTitle());
+			//////////////////////////////////////
+		}else{
+			
+			//////////////////////////////////////////////
+			int index = position % shelf.getMax();
+			Book book = shelf.getBook(index);
+	
+			
+			ViewHolder viewHolder = null;
+			
+			/**
+			 * custom code here
+			 */
+			///////////////////////////////////////
+			if(index == 0){
+				viewHolder = (ViewHolder) book.getTag();
+				if(viewHolder == null){
+					viewHolder = new ViewHolder();
+					View v = convertView.findViewById(R.id.shelf_1);
+					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
+					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
+					book.setTag(viewHolder);
+				}else{
+					viewHolder = (ViewHolder) book.getTag();
+				}
+				
+			}else if(index == 1){
+				viewHolder = (ViewHolder) book.getTag();
+				if(viewHolder == null){
+					viewHolder = new ViewHolder();
+					View v = convertView.findViewById(R.id.shelf_1);
+					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
+					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
+					book.setTag(viewHolder);
+				}else{
+					viewHolder = (ViewHolder) book.getTag();
+				}
+			}else if(index == 2){
+				viewHolder = (ViewHolder) book.getTag();
+				if(viewHolder == null){
+					viewHolder = new ViewHolder();
+					View v = convertView.findViewById(R.id.shelf_1);
+					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
+					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
+					book.setTag(viewHolder);
+				}else{
+					viewHolder = (ViewHolder) book.getTag();
+				}
+			}
+			
+			viewHolder.mTextView.setText(book.getTitle());
+			
 		}
 		
 		
@@ -75,6 +182,10 @@ public class ShelfAdapter extends BaseAdapter {
 		return convertView;
 	}
 	
-
+	
+	private class ViewHolder{
+		ImageView mImgView;
+		TextView mTextView;
+	}
 
 }
