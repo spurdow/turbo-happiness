@@ -5,9 +5,6 @@ public class Page {
 	private int bookmark;
 	
 	private String content;
-
-	
-	
 	
 	/**
 	 * @param no

@@ -6,22 +6,27 @@ public class Book {
 	
 	private List<Page> pages;
 	
-	private String name;
+	private String title;
+	
+	private String author;
 	
 	private String path;
 
 	
 	
 	
+
 	/**
 	 * @param pages
-	 * @param name
+	 * @param title
+	 * @param author
 	 * @param path
 	 */
-	public Book(List<Page> pages, String name, String path) {
+	public Book(List<Page> pages, String title, String author, String path) {
 		super();
 		this.pages = pages;
-		this.name = name;
+		this.title = title;
+		this.author = author;
 		this.path = path;
 	}
 
@@ -42,15 +47,15 @@ public class Book {
 	/**
 	 * @return the name
 	 */
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
 	/**
 	 * @param name the name to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setTitle(String name) {
+		this.title = name;
 	}
 
 	/**
@@ -65,6 +70,20 @@ public class Book {
 	 */
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	/**
+	 * @return the author
+	 */
+	public String getAuthor() {
+		return author;
+	}
+
+	/**
+	 * @param author the author to set
+	 */
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 	
 	
