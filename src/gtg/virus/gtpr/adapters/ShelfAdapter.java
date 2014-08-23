@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,128 +65,51 @@ public class ShelfAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-
-		Shelf shelf = (Shelf) getItem(position);
-		
-	//	if(shelf == null) return null;
-		
+		ViewHolder viewHolder = null;
 		if(convertView == null){
-			if(shelf.getmView() == null){
-				convertView = inflater.inflate(R.layout.shelf_row, null	);
-				shelf.setmView(convertView);
-			}
+			convertView = inflater.inflate(R.layout.shelf_row, null);
+			viewHolder = new ViewHolder();
+			viewHolder.shelf_1 = (FrameLayout) convertView.findViewById(R.id.shelf_1);
+			viewHolder.shelf_2 = (FrameLayout) convertView.findViewById(R.id.shelf_2);
+			viewHolder.shelf_3 = (FrameLayout) convertView.findViewById(R.id.shelf_3);
 			
-			convertView = shelf.getmView();
-			int index = position % shelf.getMax();
-			Book book = shelf.getBook(index);
-	
-			
-			ViewHolder viewHolder = null;
-			
-			/**
-			 * custom code here
-			 */
-			///////////////////////////////////////
-			if(index == 0){
-				viewHolder = (ViewHolder) book.getTag();
-				if(viewHolder == null){
-					viewHolder = new ViewHolder();
-					View v = convertView.findViewById(R.id.shelf_1);
-					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
-					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
-					book.setTag(viewHolder);
-				}else{
-					viewHolder = (ViewHolder) book.getTag();
-				}
-				
-			}else if(index == 1){
-				viewHolder = (ViewHolder) book.getTag();
-				if(viewHolder == null){
-					viewHolder = new ViewHolder();
-					View v = convertView.findViewById(R.id.shelf_1);
-					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
-					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
-					book.setTag(viewHolder);
-				}else{
-					viewHolder = (ViewHolder) book.getTag();
-				}
-			}else if(index == 2){
-				viewHolder = (ViewHolder) book.getTag();
-				if(viewHolder == null){
-					viewHolder = new ViewHolder();
-					View v = convertView.findViewById(R.id.shelf_1);
-					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
-					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
-					book.setTag(viewHolder);
-				}else{
-					viewHolder = (ViewHolder) book.getTag();
-				}
-			}
-			
-			viewHolder.mTextView.setText(book.getTitle());
-			//////////////////////////////////////
+			convertView.setTag(viewHolder);
 		}else{
-			
-			//////////////////////////////////////////////
-			int index = position % shelf.getMax();
-			Book book = shelf.getBook(index);
-	
-			
-			ViewHolder viewHolder = null;
-			
-			/**
-			 * custom code here
-			 */
-			///////////////////////////////////////
-			if(index == 0){
-				viewHolder = (ViewHolder) book.getTag();
-				if(viewHolder == null){
-					viewHolder = new ViewHolder();
-					View v = convertView.findViewById(R.id.shelf_1);
-					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
-					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
-					book.setTag(viewHolder);
-				}else{
-					viewHolder = (ViewHolder) book.getTag();
-				}
-				
-			}else if(index == 1){
-				viewHolder = (ViewHolder) book.getTag();
-				if(viewHolder == null){
-					viewHolder = new ViewHolder();
-					View v = convertView.findViewById(R.id.shelf_1);
-					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
-					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
-					book.setTag(viewHolder);
-				}else{
-					viewHolder = (ViewHolder) book.getTag();
-				}
-			}else if(index == 2){
-				viewHolder = (ViewHolder) book.getTag();
-				if(viewHolder == null){
-					viewHolder = new ViewHolder();
-					View v = convertView.findViewById(R.id.shelf_1);
-					viewHolder.mImgView = (ImageView) v.findViewById(R.id.thumbnail);
-					viewHolder.mTextView = (TextView) v.findViewById(R.id.title);
-					book.setTag(viewHolder);
-				}else{
-					viewHolder = (ViewHolder) book.getTag();
-				}
-			}
-			
-			viewHolder.mTextView.setText(book.getTitle());
-			
+			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		
-		
+		Shelf shelf = (Shelf) getItem(position);
+		if(shelf != null){
+			int resId = 0;
+			for(int i = 0 ; i < shelf.getMax() ; i++){
+				if(i == 0){
+					resId = R.id.shelf_1;
+				}else if(i == 1){
+					resId = R.id.shelf_2;
+				}else if(i == 2){
+					resId = R.id.shelf_3;
+				}
+				
+				Book b = shelf.getBook(i % shelf.getMax());
+				if(b != null){
+
+					View v = convertView.findViewById(resId);
+					TextView tv = (TextView) v.findViewById(R.id.title);
+					tv.setText(b.getTitle());
+				}
+			}
+
+		}
+			
 		
 		return convertView;
 	}
 	
 	
 	private class ViewHolder{
-		ImageView mImgView;
-		TextView mTextView;
+		FrameLayout shelf_1;
+		FrameLayout shelf_2;
+		FrameLayout shelf_3;
 	}
 
 }

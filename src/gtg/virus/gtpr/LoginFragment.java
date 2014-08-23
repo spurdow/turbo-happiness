@@ -118,7 +118,7 @@ public class LoginFragment extends Fragment{
 						
 						final User muser = Utilities.getUser(LoginFragment.this.getActivity().getApplicationContext());
 						if(muser != null)
-							Utilities.saveUser(LoginFragment.this.getActivity(), muser);
+							Utilities.saveUser(LoginFragment.this.getActivity().getApplicationContext(), muser);
 
 						Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
 							
@@ -134,7 +134,7 @@ public class LoginFragment extends Fragment{
 										muser.setStatus(1);
 
 										
-										if(LoginFragment.this.getActivity() != null && muser != null)
+										if(LoginFragment.this.getActivity().getApplicationContext() != null && muser != null)
 											Utilities.saveUser(LoginFragment.this.getActivity().getApplicationContext() , muser);
 
 									}

@@ -1,16 +1,22 @@
 package gtg.virus.gtpr.utils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.google.gson.Gson;
 
 import gtg.virus.gtpr.entities.User;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.util.Log;
 
 public final class Utilities {
 	
 	// the global tag to access shared file folders
 	public final static String GLOBAL_TAG = Utilities.class.getPackage().getName();
+	private static final String TAG = GLOBAL_TAG;
 	
 	
 	/**
@@ -37,6 +43,12 @@ public final class Utilities {
 			user = new Gson().fromJson(str_user, User.class);
 		}
 		
+		if(user == null){
+			Log.i(TAG, "User is null");
+		}else{
+			Log.i(TAG, "USer is not null");
+		}
+		
 		return user;
 	}
 	/**
@@ -51,8 +63,27 @@ public final class Utilities {
 		
 		String str_user = user.toString();
 		editor.putString(USER, str_user).commit();
-		
 	}
+	
+	 public static void walkdir(File dir , HashMap<String , String> data) {
+		    String pdfPattern = ".(pdf|epub)";
+
+		    File listFile[] = dir.listFiles();
+
+		    if (listFile != null) {
+		        for (int i = 0; i < listFile.length; i++) {
+
+		            if (listFile[i].isDirectory()) {
+		                walkdir(listFile[i] , data);
+		            } else {
+		              if (listFile[i].getName().matches(pdfPattern)){
+		                  // add to hashmap
+		            	  data.put(listFile[i].getName(), listFile[i].getAbsolutePath());
+		              }
+		            }
+		        }
+		    }    
+		}
 	
 	/* Checks if external storage is available for read and write */
 	public static boolean isExternalStorageWritable() {
