@@ -3,6 +3,7 @@ package gtg.virus.gtpr.utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 
@@ -66,7 +67,7 @@ public final class Utilities {
 	}
 	
 	 public static void walkdir(File dir , HashMap<String , String> data) {
-		    String pdfPattern = ".(pdf|epub)";
+		    String pdfPattern = "[a-zA-Z0-9,.-_]*.(pdf|epub)";
 
 		    File listFile[] = dir.listFiles();
 
@@ -76,10 +77,12 @@ public final class Utilities {
 		            if (listFile[i].isDirectory()) {
 		                walkdir(listFile[i] , data);
 		            } else {
-		              if (listFile[i].getName().matches(pdfPattern)){
+		              if (Pattern.matches(pdfPattern, listFile[i].getName())){
 		                  // add to hashmap
 		            	  data.put(listFile[i].getName(), listFile[i].getAbsolutePath());
+		            	  Log.i(TAG, "Not Test " + listFile[i].getName()  +" " + listFile[i].getAbsolutePath());
 		              }
+		              //Log.i(TAG,Pattern.matches(pdfPattern, listFile[i].getName()) + " Name = " + listFile[i].getName());
 		            }
 		        }
 		    }    

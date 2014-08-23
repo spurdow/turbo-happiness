@@ -3,5 +3,7 @@
 
     <string name="app_name">Pinbook</string>
     <string name="app_id">838264129517965</string>
+    <string name="drawer_open">PinBook-Menu</string>
+    <string name="drawer_close">PinBook</string>
 
 </resources>

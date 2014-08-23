@@ -116,9 +116,9 @@ public class LoginFragment extends Fragment{
 					mSession = session;
 
 						
-						final User muser = Utilities.getUser(LoginFragment.this.getActivity().getApplicationContext());
-						if(muser != null)
-							Utilities.saveUser(LoginFragment.this.getActivity().getApplicationContext(), muser);
+						final User mmuser = Utilities.getUser(LoginFragment.this.getActivity());
+						if(mmuser != null)
+							Utilities.saveUser(LoginFragment.this.getActivity(), mmuser);
 
 						Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
 							
@@ -127,14 +127,19 @@ public class LoginFragment extends Fragment{
 								// TODO Auto-generated method stub
 								if(mSession == Session.getActiveSession()){
 									if(user != null){
-										
+										User muser = null;
+										if(mmuser == null){
+											muser = new User();
+										}else{
+											muser = mmuser;
+										}
 										muser.setFacebook_id(user.getId());
 										muser.setFullname(user.getName());
 										muser.setPhoto("http://graph.facebook.com/"+user.getId()+"/picture?type=large");
 										muser.setStatus(1);
 
-										if(muser != null)
-											Utilities.saveUser(LoginFragment.this.getActivity().getApplicationContext() , muser);
+										if(LoginFragment.this.getActivity() != null && muser != null)
+											Utilities.saveUser(LoginFragment.this.getActivity() , muser);
 
 									}
 									
