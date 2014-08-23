@@ -47,7 +47,7 @@ public class LoginFragment extends Fragment{
 		super.onCreate(savedInstanceState);
 		uiHelper = new UiLifecycleHelper(getActivity(), callback);
 		uiHelper.onCreate(savedInstanceState);
-
+		Log.i(TAG, "LoginFragment");
 	}
 
 	@Override
@@ -133,8 +133,7 @@ public class LoginFragment extends Fragment{
 										muser.setPhoto("http://graph.facebook.com/"+user.getId()+"/picture?type=large");
 										muser.setStatus(1);
 
-										
-										if(LoginFragment.this.getActivity().getApplicationContext() != null && muser != null)
+										if(muser != null)
 											Utilities.saveUser(LoginFragment.this.getActivity().getApplicationContext() , muser);
 
 									}

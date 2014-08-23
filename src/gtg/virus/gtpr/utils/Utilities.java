@@ -38,15 +38,14 @@ public final class Utilities {
 		final String USER = "_user_tag";
 		User user = null;
 		SharedPreferences shared = getSharedPref(context);
-		if(shared != null){
-			String str_user = shared.getString(USER, null);
-			user = new Gson().fromJson(str_user, User.class);
-		}
+		
+		String str_user = shared.getString(USER, null);
+		user = new Gson().fromJson(str_user, User.class);
 		
 		if(user == null){
 			Log.i(TAG, "User is null");
 		}else{
-			Log.i(TAG, "USer is not null");
+			Log.i(TAG, "User is not null");
 		}
 		
 		return user;
@@ -60,9 +59,10 @@ public final class Utilities {
 		final String USER = "_user_tag";
 		final SharedPreferences shared = getSharedPref(context);
 		final SharedPreferences.Editor editor = shared.edit();
-		
+		Log.i(TAG, "Saving user");
 		String str_user = user.toString();
-		editor.putString(USER, str_user).commit();
+		boolean c = editor.putString(USER, str_user).commit();
+		Log.i(TAG, "User saved... " + c);
 	}
 	
 	 public static void walkdir(File dir , HashMap<String , String> data) {
