@@ -12,7 +12,7 @@ public class Book {
 	
 	private String path;
 
-	
+	private Object tag;
 	
 	
 
@@ -22,12 +22,13 @@ public class Book {
 	 * @param author
 	 * @param path
 	 */
-	public Book(List<Page> pages, String title, String author, String path) {
+	public Book(List<Page> pages, String title, String author, String path , Object tag) {
 		super();
 		this.pages = pages;
 		this.title = title;
 		this.author = author;
 		this.path = path;
+		this.tag = tag;
 	}
 
 	/**
@@ -84,6 +85,20 @@ public class Book {
 	 */
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	/**
+	 * @return the tag
+	 */
+	public Object getTag() {
+		return tag;
+	}
+
+	/**
+	 * @param tag the tag to set
+	 */
+	public void setTag(Object tag) {
+		this.tag = tag;
 	}
 	
 	
