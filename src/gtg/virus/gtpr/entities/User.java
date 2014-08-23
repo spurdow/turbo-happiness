@@ -1,17 +1,23 @@
 package gtg.virus.gtpr.entities;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 public class User {
 	
+
 	private long id;
 	
+	@SerializedName("fullname")
 	private String fullname;
 	
+	@SerializedName("facebook_id")
 	private String facebook_id;
 	
+	@SerializedName("photo")
 	private String photo;
 	
+	@SerializedName("status")
 	private int status;
 	
 	

@@ -17,6 +17,7 @@ import com.facebook.widget.LoginButton;
 
 
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -116,7 +117,8 @@ public class LoginFragment extends Fragment{
 
 						
 						final User muser = Utilities.getUser(LoginFragment.this.getActivity());
-						Utilities.saveUser(LoginFragment.this.getActivity(), muser);
+						if(muser != null)
+							Utilities.saveUser(LoginFragment.this.getActivity(), muser);
 
 						Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
 							
@@ -125,6 +127,7 @@ public class LoginFragment extends Fragment{
 								// TODO Auto-generated method stub
 								if(mSession == Session.getActiveSession()){
 									if(user != null){
+										
 										muser.setFacebook_id(user.getId());
 										muser.setFullname(user.getName());
 										muser.setPhoto("http://graph.facebook.com/"+user.getId()+"/picture?type=large");
@@ -146,9 +149,9 @@ public class LoginFragment extends Fragment{
 				    	request.executeAsync();
 						
 						
-					/*Intent i = new Intent(this.getActivity() , NavigationalShelfMain.class);
+					Intent i = new Intent(LoginFragment.this.getActivity(),  NavigationalShelfListViewActivity.class);
 					i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					startActivity(i);	*/	
+					startActivity(i);
 				}
 			
 			

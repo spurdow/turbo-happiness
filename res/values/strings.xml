@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">gtpr</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Pinbook</string>
     <string name="app_id">838264129517965</string>
 
 </resources>
