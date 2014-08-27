@@ -114,8 +114,8 @@ public final class Utilities {
 	    return false;
 	}
 	
-	public static Bitmap getPdfImage(File file , Book book){
+/*	public static Bitmap getPdfImage(File file , Book book){
 
-	}
+	}*/
 	
 }
