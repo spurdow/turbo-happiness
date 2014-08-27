@@ -1,15 +1,22 @@
 package gtg.virus.gtpr.utils;
 
 import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPage;
 
+import gtg.virus.gtpr.entities.Book;
 import gtg.virus.gtpr.entities.User;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
@@ -105,6 +112,10 @@ public final class Utilities {
 	        return true;
 	    }
 	    return false;
+	}
+	
+	public static Bitmap getPdfImage(File file , Book book){
+
 	}
 	
 }
