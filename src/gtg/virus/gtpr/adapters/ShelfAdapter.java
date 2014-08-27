@@ -4,15 +4,20 @@ import gtg.virus.gtpr.R;
 import gtg.virus.gtpr.entities.Book;
 import gtg.virus.gtpr.entities.Shelf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ShelfAdapter extends BaseAdapter {
@@ -44,6 +49,27 @@ public class ShelfAdapter extends BaseAdapter {
 		this(context, shelves2, null);
 	}
 
+	
+	public void addBook(Book b){
+		if(!shelves.isEmpty()){
+			Shelf shelf = shelves.get(shelves.size()-1);
+			int sizeOfShelf = shelf.getBooks().size();
+			if(sizeOfShelf < shelf.getMax()){
+				shelf.addBook(b);
+			}else{
+				Shelf newShelf = new Shelf();
+				newShelf.addBook(b);
+				shelves.add(newShelf);
+			}
+		}else{
+			Shelf shelf = new Shelf();
+			shelf.addBook(b);
+			shelves.add(shelf);
+		}
+		
+		notifyDataSetChanged();
+	}
+	
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
@@ -66,36 +92,40 @@ public class ShelfAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		ViewHolder viewHolder = null;
-		if(convertView == null){
-			convertView = inflater.inflate(R.layout.shelf_row, null);
-			viewHolder = new ViewHolder();
-			viewHolder.shelf_1 = (FrameLayout) convertView.findViewById(R.id.shelf_1);
-			viewHolder.shelf_2 = (FrameLayout) convertView.findViewById(R.id.shelf_2);
-			viewHolder.shelf_3 = (FrameLayout) convertView.findViewById(R.id.shelf_3);
-			
-			convertView.setTag(viewHolder);
-		}else{
-			viewHolder = (ViewHolder) convertView.getTag();
-		}
 		
+		viewHolder = new ViewHolder();
+		convertView = inflater.inflate(R.layout.shelf_row, null);
+		viewHolder.shelf_parent = (LinearLayout) convertView.findViewById(R.id.shelf_parent);
 		Shelf shelf = (Shelf) getItem(position);
 		if(shelf != null){
-			int resId = 0;
-			for(int i = 0 ; i < shelf.getMax() ; i++){
-				if(i == 0){
+			int maxSize  = shelf.getBooks().size();
+			Log.i("ShelfAdapter", "MAX SIZE " + maxSize);
+			
+			for(int i = 0 ; i < maxSize ; i++){
+				Book b = shelf.getBook(i);
+/*				if(i == 0){
 					resId = R.id.shelf_1;
+					b = shelf.getBook(i);
 				}else if(i == 1){
 					resId = R.id.shelf_2;
+					b = shelf.getBook(i);
 				}else if(i == 2){
 					resId = R.id.shelf_3;
-				}
+					b = shelf.getBook(i);
+				}*/
+				if(viewHolder.shelf_parent.getChildCount() >= shelf.getMax()) break;
 				
-				Book b = shelf.getBook(i % shelf.getMax());
 				if(b != null){
-
-					View v = convertView.findViewById(resId);
-					TextView tv = (TextView) v.findViewById(R.id.title);
+					FrameLayout ff = (FrameLayout) inflater.inflate(R.layout.shelf_item, null);
+					FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT);
+					params.setMargins(50, 0, 50, 0);
+					params.gravity = Gravity.LEFT;
+					ff.setLayoutParams(params);
+					
+					TextView tv = (TextView) ff.findViewById(R.id.title);
 					tv.setText(b.getTitle());
+					viewHolder.shelf_parent.addView(ff, i);
+				
 				}
 			}
 
@@ -107,9 +137,7 @@ public class ShelfAdapter extends BaseAdapter {
 	
 	
 	private class ViewHolder{
-		FrameLayout shelf_1;
-		FrameLayout shelf_2;
-		FrameLayout shelf_3;
+		LinearLayout shelf_parent;
 	}
 
 }

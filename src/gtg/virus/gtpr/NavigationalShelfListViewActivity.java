@@ -1,27 +1,36 @@
 package gtg.virus.gtpr;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.commonsware.cwac.merge.MergeAdapter;
+
 import gtg.virus.gtpr.adapters.ShelfAdapter;
+import gtg.virus.gtpr.adapters.TitleListAdapter;
 import gtg.virus.gtpr.entities.Book;
+import gtg.virus.gtpr.entities.Menu;
 import gtg.virus.gtpr.entities.Page;
 import gtg.virus.gtpr.entities.Shelf;
+import gtg.virus.gtpr.entities.User;
 import gtg.virus.gtpr.utils.Utilities;
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 public class NavigationalShelfListViewActivity extends ActionBarActivity {
@@ -41,6 +50,10 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	protected String[] titles = {"Schedule","Find Books","Sync"};
 	
 	private ActionBarDrawerToggle mDrawerToggle = null;
+	
+	private MergeAdapter mMergeAdapter = null;
+	
+	private ShelfAdapter mShelfAdapter = null;
 	/* (non-Javadoc)
 	 * @see android.support.v7.app.ActionBarActivity#onCreate(android.os.Bundle)
 	 */
@@ -51,8 +64,8 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 				
 		mListView = (ListView) findViewById(R.id.shelf_list_view);
+		/*
 		
-		List<Shelf> shelves = new ArrayList<Shelf>();
 		for(int i = 0 ; i < MAX_SHELVES ; i ++){
 			Shelf shelf = new Shelf();
 			for(int x = 0 ; x < MAX_BOOKS ; x++){
@@ -61,17 +74,33 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 				shelf.addBook(b);
 			}
 			shelves.add(shelf);
-		}
-		
-		ShelfAdapter shelfAdapter = new ShelfAdapter(this , shelves );
-		mListView.setAdapter(shelfAdapter);
+		}*/
+		List<Shelf> shelves = new ArrayList<Shelf>();
+		mShelfAdapter = new ShelfAdapter(this , shelves );
+		mListView.setAdapter(mShelfAdapter);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 	    mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
+	    // merge adapter
+	    mMergeAdapter = new MergeAdapter();
+	    
+	    final TextView userName = new TextView(this);
+	    User user = Utilities.getUser(this);
+	    
+	    if(user != null)
+	    	userName.setText(user.getFullname());
+	    else
+	    	userName.setText("Not yet available.");
+	    mMergeAdapter.addView(userName);
+	    // main menu
+	    addMainMenu();
+	    
+	    // settings
+	    addSettings();
+
 	    // Set the adapter for the list view
-	    mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-	                android.R.layout.simple_list_item_1, titles));
+	    mDrawerList.setAdapter(mMergeAdapter);
 /*	    // Set the list's click listener
 	    mDrawerList.setOnItemClickListener(new DrawerItemClickListener(){
 	    	
@@ -107,12 +136,59 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 			Utilities.walkdir(Environment.getExternalStorageDirectory(), data);
 			Utilities.walkdir(Environment.getDataDirectory(), data);
 		}
+		File storageDir = new File("/mnt/");
+		if(storageDir.exists()){
+			if(storageDir.canRead()){
+				Utilities.walkdir(storageDir, data);
+			}
+		}
+		int i =0;
 		for(Entry<String , String> d : data.entrySet()){
 			Log.i(TAG,"Test " +  d.getKey() + " "  + d.getValue());
+
+			List<Page> pages = generatePages();
+			Book b = new Book(pages, "Book " + i, "Test", "Test", null);
+			mShelfAdapter.addBook(b);
+			i++;
 		}
-		Log.i(TAG,data.size() + " test" );
+		
 	}
 
+	private void addMainMenu(){
+
+		final String mainMenu = "Main Menu";
+		final LayoutInflater inflater = LayoutInflater.from(this);
+		final View v = inflater.inflate(R.layout.layout_preference_section_header, null);
+		final TextView txtView = (TextView) v.findViewById(R.id.list_item_section_text);
+		txtView.setText(mainMenu);
+		mMergeAdapter.addView(v);
+		List<Menu> mMenu = new ArrayList<Menu>();
+		mMenu.add(new Menu(BitmapFactory.decodeResource(getResources(),R.drawable.ic_audio_play) , "Bookmarked Books"));
+		mMenu.add(new Menu(BitmapFactory.decodeResource(getResources(),R.drawable.ic_audio_play) , "Annotated Books"));
+		mMenu.add(new Menu(BitmapFactory.decodeResource(getResources(),R.drawable.ic_audio_play) , "Audio Books"));
+		mMenu.add(new Menu(BitmapFactory.decodeResource(getResources(),R.drawable.ic_menu_calendar) , "Schedule Books"));
+
+		
+		final TitleListAdapter mAdapter = new TitleListAdapter(this, mMenu);
+		mMergeAdapter.addAdapter(mAdapter);
+	
+	}
+	
+	private void addSettings(){
+
+		final String settings = "Settings";
+		final LayoutInflater inflater = LayoutInflater.from(this);
+		final View v = inflater.inflate(R.layout.layout_preference_section_header, null);
+		final TextView txtView = (TextView) v.findViewById(R.id.list_item_section_text);
+		txtView.setText(settings);
+		mMergeAdapter.addView(v);
+		List<Menu> mMenu = new ArrayList<Menu>();
+		mMenu.add(new Menu(BitmapFactory.decodeResource(getResources(),R.drawable.ic_action_settings) , "Settings"));
+		mMenu.add(new Menu(BitmapFactory.decodeResource(getResources(),R.drawable.ic_menu_help) , "Help"));
+		final TitleListAdapter mAdapter = new TitleListAdapter(this, mMenu);
+		mMergeAdapter.addAdapter(mAdapter);
+	
+	}
 	
 	
 	@Override

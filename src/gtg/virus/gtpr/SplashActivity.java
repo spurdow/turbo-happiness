@@ -2,15 +2,17 @@ package gtg.virus.gtpr;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import gtg.virus.gtpr.entities.User;
 import gtg.virus.gtpr.utils.Utilities;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Base64;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 public class SplashActivity extends Activity {
 
@@ -29,7 +32,9 @@ public class SplashActivity extends Activity {
 	
 	public final static int MAX_DELAY = 3000;
 	
-    @Override
+	private TextView mTextView;
+	
+    @SuppressLint("NewApi") @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -56,6 +61,12 @@ public class SplashActivity extends Activity {
             Log.e("exception", e.toString());
         }
 */        
+        mTextView  = (TextView) findViewById(R.id.txt_title_one);
+        Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/Pacifico.ttf");  
+        mTextView.setTypeface(tf,Typeface.BOLD);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mTextView, "y", 400f , 100f );
+        animator.setDuration(1000);
+        animator.start();
         
         mRunnable = new SplashRunnable();
         
@@ -78,7 +89,10 @@ public class SplashActivity extends Activity {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			User user = Utilities.getUser(SplashActivity.this);
+			Intent i = new Intent(SplashActivity.this, NavigationalShelfListViewActivity.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			startActivity(i);
+/*			User user = Utilities.getUser(SplashActivity.this);
 			if(user == null){
 				// go to login
 				Intent i = new Intent(SplashActivity.this,  LoginActivity.class);
@@ -89,7 +103,7 @@ public class SplashActivity extends Activity {
 				Intent i = new Intent(SplashActivity.this,  NavigationalShelfListViewActivity.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				startActivity(i);
-			}
+			}*/
 		}
 		
 	}
