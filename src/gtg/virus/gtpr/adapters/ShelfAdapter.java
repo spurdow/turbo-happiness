@@ -93,9 +93,12 @@ public class ShelfAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 		ViewHolder viewHolder = null;
 		
-		viewHolder = new ViewHolder();
+
 		convertView = inflater.inflate(R.layout.shelf_row, null);
+		
+		viewHolder = new ViewHolder();
 		viewHolder.shelf_parent = (LinearLayout) convertView.findViewById(R.id.shelf_parent);
+		
 		Shelf shelf = (Shelf) getItem(position);
 		if(shelf != null){
 			int maxSize  = shelf.getBooks().size();
@@ -113,18 +116,24 @@ public class ShelfAdapter extends BaseAdapter {
 					resId = R.id.shelf_3;
 					b = shelf.getBook(i);
 				}*/
-				if(viewHolder.shelf_parent.getChildCount() >= shelf.getMax()) break;
+				
 				
 				if(b != null){
+				
 					FrameLayout ff = (FrameLayout) inflater.inflate(R.layout.shelf_item, null);
-					FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT);
-					params.setMargins(50, 0, 50, 0);
-					params.gravity = Gravity.LEFT;
-					ff.setLayoutParams(params);
+					
+					
 					
 					TextView tv = (TextView) ff.findViewById(R.id.title);
 					tv.setText(b.getTitle());
-					viewHolder.shelf_parent.addView(ff, i);
+					
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT);
+					
+					params.leftMargin = 10;
+					params.rightMargin = 10;
+					params.gravity = Gravity.TOP;
+				
+					viewHolder.shelf_parent.addView(ff, params);
 				
 				}
 			}
@@ -137,6 +146,7 @@ public class ShelfAdapter extends BaseAdapter {
 	
 	
 	private class ViewHolder{
+
 		LinearLayout shelf_parent;
 	}
 
