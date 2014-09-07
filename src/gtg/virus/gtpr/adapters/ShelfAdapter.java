@@ -7,6 +7,7 @@ import gtg.virus.gtpr.entities.Shelf;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +29,7 @@ public class ShelfAdapter extends BaseAdapter {
 	
 	private LayoutInflater inflater = null;
 	
+	public final static int MAX_CHARACTERS = 10;
 	
 	/**
 	 * @param mContext
@@ -67,7 +69,17 @@ public class ShelfAdapter extends BaseAdapter {
 			shelves.add(shelf);
 		}
 		
-		notifyDataSetChanged();
+		((Activity) mContext).runOnUiThread(new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				notifyDataSetChanged();
+			}
+			
+		});
+		
+		
 	}
 	
 	@Override
@@ -93,11 +105,17 @@ public class ShelfAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 		ViewHolder viewHolder = null;
 		
+		if(convertView == null){
+			convertView = inflater.inflate(R.layout.shelf_row, null);
+			
+			viewHolder = new ViewHolder();
+			viewHolder.shelf_parent = (LinearLayout) convertView.findViewById(R.id.shelf_parent);
+			convertView.setTag(viewHolder);
+		}else{
+			viewHolder = (ViewHolder) convertView.getTag();
+			viewHolder.shelf_parent.removeAllViews();
+		}
 
-		convertView = inflater.inflate(R.layout.shelf_row, null);
-		
-		viewHolder = new ViewHolder();
-		viewHolder.shelf_parent = (LinearLayout) convertView.findViewById(R.id.shelf_parent);
 		
 		Shelf shelf = (Shelf) getItem(position);
 		if(shelf != null){
@@ -120,12 +138,23 @@ public class ShelfAdapter extends BaseAdapter {
 				
 				if(b != null){
 				
-					FrameLayout ff = (FrameLayout) inflater.inflate(R.layout.shelf_item, null);
-					
-					
-					
+					FrameLayout ff = (FrameLayout) viewHolder.shelf_parent.getChildAt(i);
+					if(ff == null){
+						ff = (FrameLayout) inflater.inflate(R.layout.shelf_item, null);
+					}
+							
+							
 					TextView tv = (TextView) ff.findViewById(R.id.title);
 					tv.setText(b.getTitle());
+/*					if(b.getTitle().length() > MAX_CHARACTERS - 1){
+						final String title = b.getTitle().substring(0, MAX_CHARACTERS) + "...";
+						
+					}*/
+					
+					if(b.getPage0() != null){
+						ImageView image = (ImageView) ff.findViewById(R.id.thumbnail);
+						image.setImageBitmap(b.getPage0());
+					}
 					
 					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT);
 					
@@ -146,7 +175,6 @@ public class ShelfAdapter extends BaseAdapter {
 	
 	
 	private class ViewHolder{
-
 		LinearLayout shelf_parent;
 	}
 

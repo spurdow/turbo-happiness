@@ -89,10 +89,10 @@ public class SplashActivity extends Activity {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-/*			Intent i = new Intent(SplashActivity.this, NavigationalShelfListViewActivity.class);
+			Intent i = new Intent(SplashActivity.this, NavigationalShelfListViewActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			startActivity(i);*/
-			User user = Utilities.getUser(SplashActivity.this);
+			startActivity(i);
+/*			User user = Utilities.getUser(SplashActivity.this);
 			if(user == null){
 				// go to login
 				Intent i = new Intent(SplashActivity.this,  LoginActivity.class);
@@ -104,7 +104,7 @@ public class SplashActivity extends Activity {
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				startActivity(i);
 			}
-		}
+*/		}
 		
 	}
     

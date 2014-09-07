@@ -2,6 +2,10 @@ package gtg.virus.gtpr.entities;
 
 import java.util.List;
 
+import android.graphics.Bitmap;
+
+import com.radaee.pdf.Page;
+
 public class Book {
 	
 	private List<Page> pages;
@@ -14,7 +18,7 @@ public class Book {
 
 	private Object tag;
 	
-	
+	private Bitmap page0;
 
 	/**
 	 * @param pages
@@ -22,13 +26,14 @@ public class Book {
 	 * @param author
 	 * @param path
 	 */
-	public Book(List<Page> pages, String title, String author, String path , Object tag) {
+	public Book(List<Page> pages, String title, String author, String path , Object tag , Bitmap frontPage) {
 		super();
 		this.pages = pages;
 		this.title = title;
 		this.author = author;
 		this.path = path;
 		this.tag = tag;
+		this.page0 = frontPage;
 	}
 
 	/**
@@ -99,6 +104,14 @@ public class Book {
 	 */
 	public void setTag(Object tag) {
 		this.tag = tag;
+	}
+
+	public Bitmap getPage0() {
+		return page0;
+	}
+
+	public void setPage0(Bitmap page0) {
+		this.page0 = page0;
 	}
 	
 

@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
+import com.radaee.pdf.Document;
+import com.radaee.pdf.Matrix;
+import com.radaee.pdf.Page;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -17,6 +20,8 @@ import gtg.virus.gtpr.entities.User;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Environment;
 import android.util.Log;
 
@@ -25,6 +30,8 @@ public final class Utilities {
 	// the global tag to access shared file folders
 	public final static String GLOBAL_TAG = Utilities.class.getPackage().getName();
 	private static final String TAG = GLOBAL_TAG;
+	
+	public final static String STORAGE = "/storage/sdcard0";
 	
 	
 	/**
@@ -114,8 +121,59 @@ public final class Utilities {
 	    return false;
 	}
 	
-/*	public static Bitmap getPdfImage(File file , Book book){
+	/**
+	 * 
+	 * @param doc
+	 * @return created bitmap
+	 */
+	public static Bitmap renderPage(Document doc){
+		Bitmap bitmap = null;
+		if(doc.is_opened()){
+			Page page = doc.GetPage(0);
+			float w = doc.GetPageWidth(0); 
+			float h = doc.GetPageHeight(0);
+			int iw = 100;
+			int ih = 100;
+			try{
+				bitmap = Bitmap.createBitmap(iw	, ih, Bitmap.Config.ARGB_8888);
+				bitmap.eraseColor(0);
+				float ratiox = iw/h;
+				float ratioy = ih/w;
+				if( ratiox > ratioy ) ratiox = ratioy;
+				if( !page.RenderThumb(bitmap) )
+				{
+					Canvas canvas = new Canvas(bitmap);
+					Paint paint = new Paint();
+					paint.setARGB(255, 255, 255, 255);
+					canvas.drawRect((iw - w * ratiox)/2, (ih - h * ratiox)/2,
+							(iw + w * ratiox)/2, (ih + h * ratiox)/2, paint);
+					Matrix mat = new Matrix( ratiox, -ratiox, (iw - w * ratiox)/2, (ih + h * ratiox)/2 );
+					page.RenderToBmp(bitmap, mat);
+					mat.Destroy();
+	
+				}
+				
+			}catch(Exception ex){
+				
+			}
+		}
+		return bitmap;
+	}
+	
+	public final static String first_launch_key = "_fl";
+	/**
+	 * 
+	 * @param context
+	 * @return boolean if firstlaunch or not
+	 */
+	public static boolean isFirstLaunch(Context context){
+		SharedPreferences shared = getSharedPref(context);
+		if(shared.contains(first_launch_key)){
+			return shared.getBoolean(first_launch_key, false);
+		}else{
+			return true;
+		}
+	}
 
-	}*/
 	
 }

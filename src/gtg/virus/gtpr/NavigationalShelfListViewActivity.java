@@ -5,20 +5,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.commonsware.cwac.merge.MergeAdapter;
+import com.radaee.pdf.Document;
+import com.radaee.pdf.Global;
+import com.radaee.pdf.Matrix;
+import com.radaee.pdf.Page;
 
 import gtg.virus.gtpr.adapters.ShelfAdapter;
 import gtg.virus.gtpr.adapters.TitleListAdapter;
+import gtg.virus.gtpr.async.BookCreatorTask;
 import gtg.virus.gtpr.entities.Book;
 import gtg.virus.gtpr.entities.Menu;
-import gtg.virus.gtpr.entities.Page;
 import gtg.virus.gtpr.entities.Shelf;
 import gtg.virus.gtpr.entities.User;
 import gtg.virus.gtpr.utils.Utilities;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -31,15 +42,16 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-
+import static gtg.virus.gtpr.utils.Utilities.*;
 public class NavigationalShelfListViewActivity extends ActionBarActivity {
 
 	private ListView mListView = null;
 	
-	public final static int MAX_SHELVES = 20;
+	private Document mDoc = null;
 	
-	public final static int MAX_BOOKS = 3;
+/*	public final static int MAX_SHELVES = 20;
+	
+	public final static int MAX_BOOKS = 3;*/
 
 	private static final String TAG = NavigationalShelfListViewActivity.class.getSimpleName();
 	
@@ -54,6 +66,8 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	private MergeAdapter mMergeAdapter = null;
 	
 	private ShelfAdapter mShelfAdapter = null;
+	
+	private ExecutorService mService = Executors.newFixedThreadPool(100);
 	/* (non-Javadoc)
 	 * @see android.support.v7.app.ActionBarActivity#onCreate(android.os.Bundle)
 	 */
@@ -61,6 +75,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		Global.Init( this );
 		setContentView(R.layout.activity_main);
 				
 		mListView = (ListView) findViewById(R.id.shelf_list_view);
@@ -132,27 +147,34 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 		
 		HashMap<String , String > data = new HashMap<String , String>();
+		Log.i(TAG, "External " + Environment.getExternalStorageDirectory().toString());
+		Log.i(TAG, "Others " + Environment.getRootDirectory().toString());
+
 		if(Utilities.isExternalStorageReadable()){
-			Utilities.walkdir(Environment.getExternalStorageDirectory(), data);
-			Utilities.walkdir(Environment.getDataDirectory(), data);
+
+			//Utilities.walkdir(Environment.getExternalStorageDirectory(), data);
+			//Utilities.walkdir(Environment.getDataDirectory(), data);
+			
 		}
-		File storageDir = new File("/mnt/");
+		// temporary
+		File storageDir = new File("/storage/sdcard1");
 		if(storageDir.exists()){
-			if(storageDir.canRead()){
+			if(storageDir.canRead() ){
 				Utilities.walkdir(storageDir, data);
 			}
 		}
-		int i =0;
-		for(Entry<String , String> d : data.entrySet()){
-			Log.i(TAG,"Test " +  d.getKey() + " "  + d.getValue());
+		
 
-			List<Page> pages = generatePages();
-			Book b = new Book(pages, "Book " + i, "Test", "Test", null);
-			mShelfAdapter.addBook(b);
-			i++;
+		for(final Entry<String , String> d : data.entrySet()){
+			
+			new BookCreatorTask(this, mShelfAdapter).execute(d.getValue());
+		
 		}
 		
+		
 	}
+	
+	
 
 	private void addMainMenu(){
 
@@ -217,7 +239,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	}
 	
 	
-	
+/*	
 	private List<Page> generatePages(){
 		int max_pages = 10;
 		List<Page> pages = new ArrayList<Page>();
@@ -226,7 +248,19 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 			pages.add(p);
 		}
 		return pages;
+	}*/
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		if(mDoc != null){
+			mDoc.Close();
+			mDoc = null;
+		}
+		Global.RemoveTmp();
 	}
 	
 
+	
 }
