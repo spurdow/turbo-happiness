@@ -2,11 +2,13 @@ package gtg.virus.gtpr.async;
 
 import static gtg.virus.gtpr.utils.Utilities.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 import nl.siegmann.epublib.domain.Author;
@@ -47,7 +49,7 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
 	protected PBook doInBackground(String... params) {
 		// TODO Auto-generated method stub
 		PBook newBook = null;
-
+		File file = new File(params[0]);
 		if(isPdf(params[0])){
 			mDoc = new Document();
 			mDoc.Open(params[0], "");
@@ -57,9 +59,12 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
 			String subject = mDoc.GetMeta("Subject");
 			String producer = mDoc.GetMeta("Producer");
 			
+			
 			Log.i(TAG,"Title [" + title + "] Author [" + author + "]  Producer [" + producer + "]  Subject [" + subject +"]");
 			newBook = new PBook(null, title, author, "Test", null,b);
 			newBook.setPath(params[0]);
+			newBook.isPdf = true;
+			newBook.setFilename(file.getName());
 		}else if(isEpub(params[0])){
 			EpubReader epubReader = new EpubReader();
         	Book epubBook = null;
@@ -75,16 +80,13 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
         	if(epubBook != null){
         		newBook = new PBook();
         		final String title = epubBook.getTitle();
-        		final String author = epubBook.getMetadata().getAuthors().get(0).toString();
-        		List<String> authors = new ArrayList<String>();
-        		for(Author auth : epubBook.getMetadata().getAuthors()){
-        			authors.add(auth.getFirstname() + " " + auth.getLastname());
+           		for(Author auth : epubBook.getMetadata().getAuthors()){
+        			newBook.addAuthor(auth.getFirstname() + " " + auth.getLastname());
         		}
-        		
+        		newBook.isEpub = true;
         		newBook.setTitle(title);
-        		newBook.setAuthor(author);
-        		newBook.setAuthors(authors);
         		newBook.setPath(params[0]);
+        		newBook.setFilename(file.getName());
         		Bitmap page0 = null;
         		try {
 					page0 = BitmapFactory.decodeStream(epubBook.getCoverImage().getInputStream());
@@ -108,7 +110,7 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
 		if(result == null) return;
 		super.onPostExecute(result);
 		mAdapter.addBook(result);
-		bookCache.put(result.getPath(), result);
+		bookCache.put(result.getFilename(), result);
 		if(mDoc != null)
 			mDoc.Close();
 

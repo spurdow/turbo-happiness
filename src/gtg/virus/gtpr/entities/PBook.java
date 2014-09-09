@@ -5,26 +5,35 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.radaee.pdf.Page;
 
 public class PBook {
 	
 	private List<Page> pages;
 	
+	@SerializedName("b_title")
 	private String title = "NA";
 	
+	@SerializedName("b_authors")
 	private List<String> authors;
 	
-	private String author = "NA";
-	
+	@SerializedName("b_path")
 	private String path = "NA";
+	
+	@SerializedName("b_fname")
+	private String filename = "NA";
 
+	@SerializedName("b_tag")
 	private Object tag;
 	
 	private Bitmap page0;
 	
+	@SerializedName("b_isEpub")
 	public boolean isEpub;
 	
+	@SerializedName("b_isPdf")
 	public boolean isPdf; 
 
 	/**
@@ -35,13 +44,14 @@ public class PBook {
 	 */
 	public PBook(List<Page> pages, String title, String author, String path , Object tag , Bitmap frontPage) {
 		super();
+		this.authors = new ArrayList<String>();
 		this.pages = pages;
 		this.title = title;
-		this.author = author;
 		this.path = path;
 		this.tag = tag;
 		this.page0 = frontPage;
-		this.authors = new ArrayList<String>();
+		this.authors.add(author);
+		
 	}
 
 	public PBook() {
@@ -92,17 +102,13 @@ public class PBook {
 	}
 
 	/**
-	 * @return the author
-	 */
-	public String getAuthor() {
-		return author;
-	}
-
-	/**
 	 * @param author the author to set
 	 */
-	public void setAuthor(String author) {
-		this.author = author;
+	public void addAuthor(String author) {
+		if(authors == null){
+			authors = new ArrayList<String>();
+		}
+		authors.add(author);
 	}
 
 	/**
@@ -134,6 +140,22 @@ public class PBook {
 	public void setAuthors(List<String> authors) {
 		this.authors = authors;
 	}
+	
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return new Gson().toJson(this, PBook.class);
+	}
+	
 	
 
 	

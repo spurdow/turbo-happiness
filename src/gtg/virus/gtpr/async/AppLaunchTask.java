@@ -1,11 +1,13 @@
 package gtg.virus.gtpr.async;
 
 import java.io.File;
+import java.io.IOException;
 
 import gtg.virus.gtpr.R;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import static gtg.virus.gtpr.utils.Utilities.*;
 
@@ -92,39 +94,29 @@ public class AppLaunchTask extends AsyncTask<Void,String,Boolean>{
 	@Override
 	protected Boolean doInBackground(Void... params) {
 		// TODO Auto-generated method stub
-		File fDirectory = new File(STORAGE);
-		if(isFirstLaunch(mContext)){
-			if(!fDirectory.exists()){
-				while(!fDirectory.exists()){
-					try {
-						
-						fDirectory.mkdir();
-						Thread.sleep(1000L);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			if(fDirectory.exists()){
-				return true;
-			}
-		}else{
-			while(!fDirectory.exists()){
-				try {
-					
-					fDirectory.mkdir();
-					Thread.sleep(1000L);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(fDirectory.exists()){
-				return true;
-			}
+		File fDirectory = new File(Environment.getExternalStorageDirectory() , STORAGE_SUFFIX);
+		
+		if(fDirectory.isDirectory()){
+			return true;
 		}
+		File parent = fDirectory.getParentFile();
+		while(!fDirectory.mkdir() || !fDirectory.isDirectory()){
+			try {
+				Log.w(TAG, "Creating directory...");
+				Thread.sleep(1000L);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		}
+	
+		if(fDirectory.exists()){
+			Log.w(TAG, "Directory exists");
+			return true;
+		}else{
+			Log.w(TAG, "Directory did not exist");
+		}
+		
 		return false;
 	}
 

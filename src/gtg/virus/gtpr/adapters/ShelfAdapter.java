@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
@@ -27,28 +28,32 @@ public class ShelfAdapter extends BaseAdapter {
 	
 	private List<Shelf> shelves;
 	
+	private List<PBook> books;
+	
 	private LayoutInflater inflater = null;
 	
 	public final static int MAX_CHARACTERS = 10;
+
+	protected static final String TAG = ShelfAdapter.class.getSimpleName();
 	
 	/**
 	 * @param mContext
 	 * @param books
 	 * @param inflater
 	 */
-	public ShelfAdapter(Context mContext, List<Shelf> shelves,
+	public ShelfAdapter(Context mContext, 
 			LayoutInflater inflater) {
 		super();
 		this.mContext = mContext;
-		this.shelves = shelves;
+		this.shelves = new ArrayList<Shelf>();
 		this.inflater = LayoutInflater.from(mContext);
+		this.books = new ArrayList<PBook>();
 	}
 
 	public ShelfAdapter(
-			Context context,
-			List<Shelf> shelves2) {
+			Context context) {
 		// TODO Auto-generated constructor stub
-		this(context, shelves2, null);
+		this(context, null);
 	}
 
 	
@@ -69,6 +74,8 @@ public class ShelfAdapter extends BaseAdapter {
 			shelves.add(shelf);
 		}
 		
+		books.add(b);
+		
 		((Activity) mContext).runOnUiThread(new Runnable(){
 
 			@Override
@@ -81,6 +88,18 @@ public class ShelfAdapter extends BaseAdapter {
 		
 		
 	}
+
+	
+	/**
+	 * 
+	 * @param bookPosition
+	 * @return PBook at position
+	 */
+	public PBook getBookAtPosition(int bookPosition){
+		return books.get(bookPosition);
+
+	}
+
 	
 	@Override
 	public int getCount() {
@@ -101,7 +120,7 @@ public class ShelfAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		ViewHolder viewHolder = null;
 		
@@ -119,11 +138,12 @@ public class ShelfAdapter extends BaseAdapter {
 		
 		Shelf shelf = (Shelf) getItem(position);
 		if(shelf != null){
-			int maxSize  = shelf.getBooks().size();
+			final int maxSize  = shelf.getBooks().size();
 			
 			for(int i = 0 ; i < maxSize ; i++){
-				PBook b = shelf.getBook(i);
+				final PBook b = shelf.getBook(i);
 				
+
 				
 				if(b != null){
 				
@@ -131,9 +151,16 @@ public class ShelfAdapter extends BaseAdapter {
 					if(ff == null){
 						ff = (FrameLayout) inflater.inflate(R.layout.shelf_item, null);
 					}
-					
-					
-							
+					ff.setOnClickListener(new OnClickListener(){
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Log.i(TAG, "PBook " + b.toString() );
+						}
+						
+					});
+
 					TextView tv = (TextView) ff.findViewById(R.id.title);
 					tv.setText(b.getTitle());
 

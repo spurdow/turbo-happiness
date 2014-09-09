@@ -80,6 +80,7 @@ public class SplashActivity extends Activity {
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
+		mHandler.removeCallbacks(mRunnable);
 	}
     
     
