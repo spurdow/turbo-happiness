@@ -12,6 +12,8 @@ import gtg.virus.gtpr.entities.PBook;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import static gtg.virus.gtpr.utils.Utilities.*;
@@ -74,9 +76,39 @@ public class GTGPdfViewer extends ActionBarActivity implements PDFReaderListener
 		}
 		
 	}
+	
+	
+
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.pdf_viewer_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 
 
 
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch(item.getItemId()){
+		case R.id.opt_menu_search: break;
+		
+		case R.id.opt_menu_set_alarm: break;
+		
+		case R.id.opt_menu_view: break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+
+
+
+	/************************************************************************
+	 * 			Listener Event for Pdf Page and User Events
+	 *************************************************************************/
 
 	@Override
 	public void OnPageModified(int pageno) {

@@ -11,7 +11,7 @@ import com.radaee.pdf.Page;
 
 public class PBook {
 	
-	private List<Page> pages;
+	private List<PPage> pages;
 	
 	@SerializedName("b_title")
 	private String title = "NA";
@@ -42,7 +42,7 @@ public class PBook {
 	 * @param author
 	 * @param path
 	 */
-	public PBook(List<Page> pages, String title, String author, String path , Object tag , Bitmap frontPage) {
+	public PBook(List<PPage> pages, String title, String author, String path , Object tag , Bitmap frontPage) {
 		super();
 		this.authors = new ArrayList<String>();
 		this.pages = pages;
@@ -62,14 +62,14 @@ public class PBook {
 	/**
 	 * @return the pages
 	 */
-	public List<Page> getPages() {
+	public List<PPage> getPages() {
 		return pages;
 	}
 
 	/**
 	 * @param pages the pages to set
 	 */
-	public void setPages(List<Page> pages) {
+	public void setPages(List<PPage> pages) {
 		this.pages = pages;
 	}
 

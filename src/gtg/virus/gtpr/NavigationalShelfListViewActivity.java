@@ -625,8 +625,6 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 			mDoc = null;
 		}
 		
-
-		
 		bookCache.clear();
 		
 		Global.RemoveTmp();
