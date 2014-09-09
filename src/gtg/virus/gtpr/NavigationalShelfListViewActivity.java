@@ -173,6 +173,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 					for(Entry<String,String> e : data.entrySet()){
 						BookCreatorTask bookTask = new BookCreatorTask(NavigationalShelfListViewActivity.this, mShelfAdapter);
 						bookTask.execute(e.getValue());
+						Log.i(TAG, "Val " + e.getValue());
 					}
 					
 				}else{
@@ -315,7 +316,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 									File newPdf = new File(path);
 									Log.w(TAG, "File " + newPdf.getName());
 									final String[] arr_file = newPdf.getName().split("[.]");
-									final String filename = arr_file[0] + bookCache.size() + "" + arr_file[1];
+									final String filename = arr_file[0] + bookCache.size() + "." + arr_file[1];
 									File toStorage = new File(Environment.getExternalStorageDirectory() +"/"+ STORAGE_SUFFIX + "/" + filename );
 
 									try {
@@ -350,7 +351,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 						                    	b.addAuthor(author);
 						                    	b.setTitle(title);
 						                    	b.setPath(path);;
-						                    	Bitmap page0 = renderPage(mDoc);
+						                    	Bitmap page0 = renderPage(mDoc , 100, 100);
 						                    	b.setPage0(page0);
 						                    	b.isPdf= true;
 						                    	b.setFilename(newPdf.getName());
@@ -516,7 +517,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 				                    	b.addAuthor(author);
 				                    	b.setTitle(title);
 				                    	b.setPath(path);;
-				                    	Bitmap page0 = renderPage(mDoc);
+				                    	Bitmap page0 = renderPage(mDoc , 100, 100);
 				                    	b.setPage0(page0);
 				                    	b.isPdf= true;
 				                    	b.setFilename(newPdf.getName());

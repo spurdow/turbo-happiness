@@ -48,6 +48,7 @@
         <data android:mimeType="text/*" />
     </intent-filter>
 </activity>
+        <activity android:name="GTGPdfViewer"></activity>
     </application>
 
 </manifest>

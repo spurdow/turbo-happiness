@@ -19,8 +19,6 @@ import com.google.gson.Gson;
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Matrix;
 import com.radaee.pdf.Page;
-import com.sun.pdfview.PDFFile;
-import com.sun.pdfview.PDFPage;
 
 import gtg.virus.gtpr.entities.PBook;
 import gtg.virus.gtpr.entities.User;
@@ -43,6 +41,8 @@ public final class Utilities {
 	public final static String pdfPattern = "[a-zA-Z0-9,.-_]*.(pdf|epub|txt)";
 	
 	public final static String pdfSlashPattern = "[^!.]*.(pdf|epub|txt)";
+	
+	public final static String PIN_EXTRA_PBOOK = "_pbook_extra";
 	
 	public final static Map<String , PBook> bookCache = new ConcurrentHashMap<String , PBook>();
 	
@@ -98,7 +98,6 @@ public final class Utilities {
 	}
 	
 	public static void walkdir(File dir , HashMap<String , String> data) {
-		    
 
 		    File listFile[] = dir.listFiles();
 
@@ -108,7 +107,7 @@ public final class Utilities {
 		            if (listFile[i].isDirectory()) {
 		                walkdir(listFile[i] , data);
 		            } else {
-		              if (Pattern.matches(pdfPattern, listFile[i].getName())){
+		              if (Pattern.matches(pdfSlashPattern, listFile[i].getAbsolutePath())){
 		                  // add to hashmap
 		            	  data.put(listFile[i].getName(), listFile[i].getAbsolutePath());
 		            	  Log.i(TAG, "Not Test " + listFile[i].getName()  +" " + listFile[i].getAbsolutePath());
@@ -143,14 +142,12 @@ public final class Utilities {
 	 * @param doc
 	 * @return created bitmap
 	 */
-	public static Bitmap renderPage(Document doc){
+	public static Bitmap renderPage(Document doc , int iw, int ih){
 		Bitmap bitmap = null;
 		if(doc.is_opened()){
 			Page page = doc.GetPage(0);
 			float w = doc.GetPageWidth(0); 
 			float h = doc.GetPageHeight(0);
-			int iw = 100;
-			int ih = 100;
 			try{
 				bitmap = Bitmap.createBitmap(iw	, ih, Bitmap.Config.ARGB_8888);
 				bitmap.eraseColor(0);

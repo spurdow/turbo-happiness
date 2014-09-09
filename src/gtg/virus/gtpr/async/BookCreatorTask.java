@@ -11,6 +11,7 @@ import java.util.List;
 
 
 
+
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.epub.EpubReader;
@@ -53,7 +54,7 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
 		if(isPdf(params[0])){
 			mDoc = new Document();
 			mDoc.Open(params[0], "");
-			Bitmap b = renderPage(mDoc);
+			Bitmap b = renderPage(mDoc , 100, 100);
 			String title = mDoc.GetMeta("Title");
 			String author = mDoc.GetMeta("Author");
 			String subject = mDoc.GetMeta("Subject");

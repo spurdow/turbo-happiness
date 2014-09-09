@@ -1,14 +1,17 @@
 package gtg.virus.gtpr.adapters;
 
+import gtg.virus.gtpr.GTGPdfViewer;
 import gtg.virus.gtpr.R;
 import gtg.virus.gtpr.entities.PBook;
 import gtg.virus.gtpr.entities.Shelf;
+import gtg.virus.gtpr.utils.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,7 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import static gtg.virus.gtpr.utils.Utilities.*;
 public class ShelfAdapter extends BaseAdapter {
 
 	private Context mContext;
@@ -156,7 +159,14 @@ public class ShelfAdapter extends BaseAdapter {
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-							Log.i(TAG, "PBook " + b.toString() );
+							if(Utilities.isEpub(b.getPath())){
+								
+							}else if(Utilities.isPdf(b.getPath())){
+								Intent intent = new Intent(mContext, GTGPdfViewer.class);
+							    intent.putExtra(PIN_EXTRA_PBOOK, b.toString());
+							    mContext.startActivity(intent);
+							}
+
 						}
 						
 					});
