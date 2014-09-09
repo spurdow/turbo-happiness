@@ -4,11 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.commonsware.cwac.merge.MergeAdapter;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Global;
 import com.radaee.pdf.Matrix;
@@ -16,19 +18,25 @@ import com.radaee.pdf.Page;
 
 import gtg.virus.gtpr.adapters.ShelfAdapter;
 import gtg.virus.gtpr.adapters.TitleListAdapter;
+import gtg.virus.gtpr.async.AppLaunchTask;
+import gtg.virus.gtpr.async.AppLaunchTask.AppLaunchListener;
 import gtg.virus.gtpr.async.BookCreatorTask;
-import gtg.virus.gtpr.entities.Book;
+import gtg.virus.gtpr.db.Item;
+import gtg.virus.gtpr.db.ItemHelper;
+import gtg.virus.gtpr.entities.PBook;
 import gtg.virus.gtpr.entities.Menu;
 import gtg.virus.gtpr.entities.Shelf;
 import gtg.virus.gtpr.entities.User;
 import gtg.virus.gtpr.utils.Utilities;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,18 +50,17 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import static gtg.virus.gtpr.utils.Utilities.*;
 public class NavigationalShelfListViewActivity extends ActionBarActivity {
 
 	private ListView mListView = null;
 	
 	private Document mDoc = null;
-	
-/*	public final static int MAX_SHELVES = 20;
-	
-	public final static int MAX_BOOKS = 3;*/
 
 	private static final String TAG = NavigationalShelfListViewActivity.class.getSimpleName();
+
+	private static final int REQUEST_CHOOSER = 12345;
 	
 	protected DrawerLayout mDrawerLayout = null;
 	
@@ -68,6 +75,8 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	private ShelfAdapter mShelfAdapter = null;
 	
 	private ExecutorService mService = Executors.newFixedThreadPool(100);
+	
+	private ItemHelper iHelper = null;
 	/* (non-Javadoc)
 	 * @see android.support.v7.app.ActionBarActivity#onCreate(android.os.Bundle)
 	 */
@@ -79,17 +88,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 				
 		mListView = (ListView) findViewById(R.id.shelf_list_view);
-		/*
-		
-		for(int i = 0 ; i < MAX_SHELVES ; i ++){
-			Shelf shelf = new Shelf();
-			for(int x = 0 ; x < MAX_BOOKS ; x++){
-				List<Page> pages = generatePages();
-				Book b = new Book(pages, "Shelf " + i + " Book " + x, "Author " + x, "Path " + x, null);
-				shelf.addBook(b);
-			}
-			shelves.add(shelf);
-		}*/
+
 		List<Shelf> shelves = new ArrayList<Shelf>();
 		mShelfAdapter = new ShelfAdapter(this , shelves );
 		mListView.setAdapter(mShelfAdapter);
@@ -142,38 +141,45 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
         // Set the drawer toggle as the DrawerListener
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 		
-
+        iHelper = new ItemHelper(NavigationalShelfListViewActivity.this);
+        
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		
-		HashMap<String , String > data = new HashMap<String , String>();
-		Log.i(TAG, "External " + Environment.getExternalStorageDirectory().toString());
-		Log.i(TAG, "Others " + Environment.getRootDirectory().toString());
+		AppLaunchTask task = new AppLaunchTask(this);
+		task.setListener(new AppLaunchListener(){
 
-		if(Utilities.isExternalStorageReadable()){
-
-			//Utilities.walkdir(Environment.getExternalStorageDirectory(), data);
-			//Utilities.walkdir(Environment.getDataDirectory(), data);
-			
-		}
-		// temporary
-		File storageDir = new File("/storage/sdcard1");
-		if(storageDir.exists()){
-			if(storageDir.canRead() ){
-				Utilities.walkdir(storageDir, data);
+			@Override
+			public void onStartTask() {
+				// TODO Auto-generated method stub
+				
 			}
-		}
-		
 
-		for(final Entry<String , String> d : data.entrySet()){
+			@Override
+			public void onFinishTask() {
+				// TODO Auto-generated method stub
+				
+				
+				List<Item> items = iHelper.list();
+				
+				if(items.size() > 0){
+					for(Item item : items){
+						BookCreatorTask bookTask = new BookCreatorTask(NavigationalShelfListViewActivity.this, mShelfAdapter);
+						bookTask.execute(item.getPath());
+					}
+					
+				}else{
+					Toast.makeText(NavigationalShelfListViewActivity.this, "You dont have pdf's yet", Toast.LENGTH_LONG).show();
+/*					Map<String , String> map = new HashMap<String , String>();
+					
+					walkDir();*/
+				}
+			}
 			
-			new BookCreatorTask(this, mShelfAdapter).execute(d.getValue());
-		
-		}
-		
+		});
+		task.execute(null,null,null);
 		
 	}
-	
 	
 
 	private void addMainMenu(){
@@ -225,6 +231,19 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	    super.onConfigurationChanged(newConfig);
 	    mDrawerToggle.onConfigurationChanged(newConfig);
 	}
+	
+	
+
+	
+
+
+	@Override
+	public boolean onCreateOptionsMenu(android.view.Menu menu) {
+		// TODO Auto-generated method stub
+		this.getMenuInflater().inflate(R.menu.main_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -234,21 +253,120 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	        return true;
 	    }
 	    // Handle your other action bar items...
+	    switch(item.getItemId()){
+	    case R.id.menu_add: 
+	    	 // Create the ACTION_GET_CONTENT Intent
+	        Intent getContentIntent = FileUtils.createGetContentIntent();
 
+	        Intent intent = Intent.createChooser(getContentIntent, "Select a file");
+	        startActivityForResult(intent, REQUEST_CHOOSER);
+	    	break;
+	    }
 	    return super.onOptionsItemSelected(item);
 	}
 	
 	
-/*	
-	private List<Page> generatePages(){
-		int max_pages = 10;
-		List<Page> pages = new ArrayList<Page>();
-		for(int i = 0 ; i < max_pages ; i++ ){
-			Page p = new Page(0, "Test Content in page " + i );
-			pages.add(p);
-		}
-		return pages;
-	}*/
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		switch (requestCode) {
+        case REQUEST_CHOOSER:   
+            if (resultCode == RESULT_OK) {
+            	final Uri uri = data.getData();
+            	new AsyncTask<Void, Void,PBook>(){
+
+            		private ProgressDialog mProgress;
+					@Override
+					protected void onPreExecute() {
+						// TODO Auto-generated method stub
+						super.onPreExecute();
+						mProgress = new ProgressDialog(NavigationalShelfListViewActivity.this);
+						mProgress.setMessage("Please wait...");
+						mProgress.setIndeterminate(true);
+						mProgress.show();
+					}
+
+					@Override
+					protected PBook doInBackground(Void... params) {
+						// TODO Auto-generated method stub
+
+						
+		                // Get the File path from the Uri
+		                String path = FileUtils.getPath(NavigationalShelfListViewActivity.this, uri);
+		                PBook b = null;
+		                Log.i(TAG, "Path " + path);
+		                // Alternatively, use FileUtils.getFile(Context, Uri)
+		                if (path != null && Utilities.isValideBook(path) && FileUtils.isLocal(path)) {
+		                    if(Utilities.isPdf(path) && iHelper != null){
+		                    	Item i = new Item();
+		                    	i.setPath(path);
+		                    	iHelper.add(i);
+		                    	
+		                    	
+		                    	mDoc = new Document();
+		                    	int index = mDoc.Open(path, "");
+		 
+		                    	if( index == 0){
+			                    	String author = mDoc.GetMeta("Author");
+			                    	String title = mDoc.GetMeta("Title");
+			                    	String subject = mDoc.GetMeta("Subject");
+			                    	Log.i(TAG,"Meta " + author + " " + title + " " + subject);
+			                    	b = new PBook();
+			                    	b.setAuthor(author);
+			                    	b.setTitle(title);
+			                    	Bitmap page0 = Utilities.renderPage(mDoc);
+			                    	b.setPage0(page0);
+		                    	}else if(index == -1){
+		                    		makeText("Password needed");
+		                    	}else if(index == -2){
+		                    		makeText("Unknown Encryption");
+		                    	}else if(index == -3){
+		                    		makeText("Damage or Invalid Format");
+		                    	}else if(index == -10){
+		                    		makeText("Access Denied");
+		                    	}
+		                    	
+		                    }else if(Utilities.isEpub(path)){
+		                    	
+		                    }
+		                }else if(!Utilities.isValideBook(path)){
+		                	makeText( "File is not a pdf/epub/txt");
+		                }
+	    
+						return b;
+					}
+					
+					private void makeText(final String msg){
+						runOnUiThread(new Runnable(){
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								Toast.makeText(NavigationalShelfListViewActivity.this, msg, Toast.LENGTH_SHORT).show();
+							}
+							
+						});
+					}
+					@Override
+					protected void onPostExecute(PBook result) {
+						// TODO Auto-generated method stub
+						super.onPostExecute(result);
+						if(result != null){
+							mShelfAdapter.addBook(result);
+						}
+						mProgress.dismiss();
+					}
+					
+					
+            		
+            	}.executeOnExecutor(mService, null,null,null);
+	        }
+            break;
+    }
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 
 	@Override
 	protected void onDestroy() {
@@ -258,6 +376,11 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 			mDoc.Close();
 			mDoc = null;
 		}
+		
+		if(iHelper != null){
+			iHelper = null;
+		}
+		
 		Global.RemoveTmp();
 	}
 	

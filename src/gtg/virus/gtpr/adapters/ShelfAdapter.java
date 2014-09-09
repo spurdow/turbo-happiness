@@ -1,7 +1,7 @@
 package gtg.virus.gtpr.adapters;
 
 import gtg.virus.gtpr.R;
-import gtg.virus.gtpr.entities.Book;
+import gtg.virus.gtpr.entities.PBook;
 import gtg.virus.gtpr.entities.Shelf;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class ShelfAdapter extends BaseAdapter {
 	}
 
 	
-	public void addBook(Book b){
+	public void addBook(PBook b){
 		if(!shelves.isEmpty()){
 			Shelf shelf = shelves.get(shelves.size()-1);
 			int sizeOfShelf = shelf.getBooks().size();
@@ -120,20 +120,9 @@ public class ShelfAdapter extends BaseAdapter {
 		Shelf shelf = (Shelf) getItem(position);
 		if(shelf != null){
 			int maxSize  = shelf.getBooks().size();
-			Log.i("ShelfAdapter", "MAX SIZE " + maxSize);
 			
 			for(int i = 0 ; i < maxSize ; i++){
-				Book b = shelf.getBook(i);
-/*				if(i == 0){
-					resId = R.id.shelf_1;
-					b = shelf.getBook(i);
-				}else if(i == 1){
-					resId = R.id.shelf_2;
-					b = shelf.getBook(i);
-				}else if(i == 2){
-					resId = R.id.shelf_3;
-					b = shelf.getBook(i);
-				}*/
+				PBook b = shelf.getBook(i);
 				
 				
 				if(b != null){
@@ -142,15 +131,12 @@ public class ShelfAdapter extends BaseAdapter {
 					if(ff == null){
 						ff = (FrameLayout) inflater.inflate(R.layout.shelf_item, null);
 					}
-							
+					
+					
 							
 					TextView tv = (TextView) ff.findViewById(R.id.title);
 					tv.setText(b.getTitle());
-/*					if(b.getTitle().length() > MAX_CHARACTERS - 1){
-						final String title = b.getTitle().substring(0, MAX_CHARACTERS) + "...";
-						
-					}*/
-					
+
 					if(b.getPage0() != null){
 						ImageView image = (ImageView) ff.findViewById(R.id.thumbnail);
 						image.setImageBitmap(b.getPage0());
@@ -164,6 +150,7 @@ public class ShelfAdapter extends BaseAdapter {
 				
 					viewHolder.shelf_parent.addView(ff, params);
 				
+
 				}
 			}
 

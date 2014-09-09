@@ -15,7 +15,7 @@ import com.radaee.pdf.Page;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
-import gtg.virus.gtpr.entities.Book;
+import gtg.virus.gtpr.entities.PBook;
 import gtg.virus.gtpr.entities.User;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,9 +31,11 @@ public final class Utilities {
 	public final static String GLOBAL_TAG = Utilities.class.getPackage().getName();
 	private static final String TAG = GLOBAL_TAG;
 	
-	public final static String STORAGE = "/storage/sdcard0";
+	public final static String STORAGE = "/storage/sdcard0/pinbook";
 	
+	public final static String pdfPattern = "[a-zA-Z0-9,.-_]*.(pdf|epub|txt)";
 	
+	public final static String pdfSlashPattern = "[^!.]*.(pdf|epub|txt)";
 	/**
 	 * 
 	 * @param context
@@ -80,8 +82,12 @@ public final class Utilities {
 		Log.i(TAG, "User saved... " + c);
 	}
 	
-	 public static void walkdir(File dir , HashMap<String , String> data) {
-		    String pdfPattern = "[a-zA-Z0-9,.-_]*.(pdf|epub)";
+	public static boolean isValideBook(String name){
+		return Pattern.matches(pdfSlashPattern, name);
+	}
+	
+	public static void walkdir(File dir , HashMap<String , String> data) {
+		    
 
 		    File listFile[] = dir.listFiles();
 
@@ -169,11 +175,28 @@ public final class Utilities {
 	public static boolean isFirstLaunch(Context context){
 		SharedPreferences shared = getSharedPref(context);
 		if(shared.contains(first_launch_key)){
-			return shared.getBoolean(first_launch_key, false);
+			return shared.getBoolean(first_launch_key, true);
 		}else{
+			
 			return true;
 		}
 	}
-
+	/**
+	 * remove first launch
+	 * @param context
+	 */
+	public static void removeFirstLaunch(Context context){
+		SharedPreferences shared = getSharedPref(context);
+		shared.edit().putBoolean(first_launch_key, false).commit();
+	}
 	
+	public static boolean isEpub(String path){
+		final String regularExpression = "[^!]*.epub";
+		return Pattern.matches(regularExpression, path);
+	}
+	
+	public static boolean isPdf(String path){
+		final String regularExpression = "[^!]*.pdf";
+		return Pattern.matches(regularExpression, path);
+	}
 }

@@ -9,7 +9,7 @@ import android.view.View;
 
 public class Shelf {
 	
-	private List<Book> books;
+	private List<PBook> books;
 	
 	private int max;
 	
@@ -21,30 +21,30 @@ public class Shelf {
 	 */
 	public Shelf() {
 		super();
-		this.books = new ArrayList<Book>();
+		this.books = new ArrayList<PBook>();
 		this.max = MAX;
 	}
 	
 	
-	public void addBook(Book b){
+	public void addBook(PBook b){
 		books.add(b);
 	}
 	
-	public Book getBook(int pos){
+	public PBook getBook(int pos){
 		return books.get(pos);
 	}
 
 	/**dv
 	 * @return the books
 	 */
-	public List<Book> getBooks() {
+	public List<PBook> getBooks() {
 		return books;
 	}
 
 	/**
 	 * @param books the books to set
 	 */
-	public void setBooks(List<Book> books) {
+	public void setBooks(List<PBook> books) {
 		this.books = books;
 	}
 	
