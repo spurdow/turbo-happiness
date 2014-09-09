@@ -12,11 +12,13 @@ import java.util.List;
 
 
 
+
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.epub.EpubReader;
 
 import com.radaee.pdf.Document;
+import com.radaee.pdf.Page;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -66,6 +68,7 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
 			newBook.setPath(params[0]);
 			newBook.isPdf = true;
 			newBook.setFilename(file.getName());
+			
 		}else if(isEpub(params[0])){
 			EpubReader epubReader = new EpubReader();
         	Book epubBook = null;
