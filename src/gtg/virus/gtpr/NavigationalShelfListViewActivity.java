@@ -571,7 +571,8 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 			                    		Bitmap page0 = null;
 			                    		try {
 											page0 = BitmapFactory.decodeStream(epubBook.getCoverImage().getInputStream());
-										} catch (IOException e) {
+											
+			                    		} catch (IOException e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();
 										}

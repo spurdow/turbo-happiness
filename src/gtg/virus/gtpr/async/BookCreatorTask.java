@@ -74,6 +74,7 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
         	Book epubBook = null;
         	try {
 				epubBook = epubReader.readEpub(new FileInputStream(params[0]));
+				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,7 +94,8 @@ public class BookCreatorTask extends AsyncTask<String, Void , PBook>{
         		newBook.setFilename(file.getName());
         		Bitmap page0 = null;
         		try {
-					page0 = BitmapFactory.decodeStream(epubBook.getCoverImage().getInputStream());
+        			epubBook.getContents().get(0);
+					page0 = BitmapFactory.decodeStream(epubBook.getContents().get(0).getInputStream());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -21,8 +21,10 @@
         android:layout_gravity="bottom"
         android:background="#55000000"
         android:gravity="center"
+        android:maxLength="10"
         android:padding="10dp"
-        android:text="Test"
+        android:singleLine="true"
+        android:text="est"
         android:textColor="@android:color/white" />
 
 </FrameLayout>
