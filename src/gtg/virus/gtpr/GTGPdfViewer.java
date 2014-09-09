@@ -54,34 +54,21 @@ public class GTGPdfViewer extends ActionBarActivity implements PDFReaderListener
 	}
 	
 	
+	
 
 	@Override
-	protected void onStart() {
+	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		super.onResume();
-
-	}
-
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
+		Log.i(TAG, "OnDestroy");
+		super.onDestroy();
 		if(mDoc != null){
 			mDoc.Close();
 		}
 		
-		if(mReader != null){
-			mReader.PDFClose();
-		}
-	
 	}
-	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
 
-		finish();
-	}
-	
+
+
 
 	@Override
 	public void OnPageModified(int pageno) {
