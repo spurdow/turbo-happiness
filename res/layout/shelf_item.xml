@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="#55000000"
+        android:gravity="center"
         android:padding="10dp"
         android:text="Test"
         android:textColor="@android:color/white" />

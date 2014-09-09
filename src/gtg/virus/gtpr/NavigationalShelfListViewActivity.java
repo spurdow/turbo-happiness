@@ -1,6 +1,9 @@
 package gtg.virus.gtpr;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +11,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import nl.siegmann.epublib.domain.Author;
+import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.epub.EpubReader;
 
 import com.commonsware.cwac.merge.MergeAdapter;
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -29,7 +36,10 @@ import gtg.virus.gtpr.entities.Shelf;
 import gtg.virus.gtpr.entities.User;
 import gtg.virus.gtpr.utils.Utilities;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -100,7 +110,7 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 	    mMergeAdapter = new MergeAdapter();
 	    
 	    final TextView userName = new TextView(this);
-	    User user = Utilities.getUser(this);
+	    User user = getUser(this);
 	    
 	    if(user != null)
 	    	userName.setText(user.getFullname());
@@ -274,93 +284,169 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
         case REQUEST_CHOOSER:   
             if (resultCode == RESULT_OK) {
             	final Uri uri = data.getData();
-            	new AsyncTask<Void, Void,PBook>(){
+            	final String path = FileUtils.getPath(NavigationalShelfListViewActivity.this, uri);
+            	
+            	if(bookCache.containsKey(path)){
+            		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            		builder.setTitle("Warning");
+            		builder.setMessage("The system found that this file is already in your list. Are you sure you want to continue?");
+            		builder.setPositiveButton("Yes", new OnClickListener(){
 
-            		private ProgressDialog mProgress;
-					@Override
-					protected void onPreExecute() {
-						// TODO Auto-generated method stub
-						super.onPreExecute();
-						mProgress = new ProgressDialog(NavigationalShelfListViewActivity.this);
-						mProgress.setMessage("Please wait...");
-						mProgress.setIndeterminate(true);
-						mProgress.show();
-					}
+						@Override
+						public void onClick(final DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							new AsyncTask<Void, Void,PBook>(){
 
-					@Override
-					protected PBook doInBackground(Void... params) {
-						// TODO Auto-generated method stub
+			            		private ProgressDialog mProgress;
+								@Override
+								protected void onPreExecute() {
+									// TODO Auto-generated method stub
+									super.onPreExecute();
+									mProgress = new ProgressDialog(NavigationalShelfListViewActivity.this);
+									mProgress.setMessage("Please wait...");
+									mProgress.setIndeterminate(true);
+									mProgress.show();
+								}
 
-						
-		                // Get the File path from the Uri
-		                String path = FileUtils.getPath(NavigationalShelfListViewActivity.this, uri);
-		                PBook b = null;
-		                Log.i(TAG, "Path " + path);
-		                // Alternatively, use FileUtils.getFile(Context, Uri)
-		                if (path != null && Utilities.isValideBook(path) && FileUtils.isLocal(path)) {
-		                    if(Utilities.isPdf(path) && iHelper != null){
-		                    	Item i = new Item();
-		                    	i.setPath(path);
-		                    	iHelper.add(i);
-		                    	
-		                    	
-		                    	mDoc = new Document();
-		                    	int index = mDoc.Open(path, "");
-		 
-		                    	if( index == 0){
-			                    	String author = mDoc.GetMeta("Author");
-			                    	String title = mDoc.GetMeta("Title");
-			                    	String subject = mDoc.GetMeta("Subject");
-			                    	Log.i(TAG,"Meta " + author + " " + title + " " + subject);
-			                    	b = new PBook();
-			                    	b.setAuthor(author);
-			                    	b.setTitle(title);
-			                    	Bitmap page0 = Utilities.renderPage(mDoc);
-			                    	b.setPage0(page0);
-		                    	}else if(index == -1){
-		                    		makeText("Password needed");
-		                    	}else if(index == -2){
-		                    		makeText("Unknown Encryption");
-		                    	}else if(index == -3){
-		                    		makeText("Damage or Invalid Format");
-		                    	}else if(index == -10){
-		                    		makeText("Access Denied");
-		                    	}
-		                    	
-		                    }else if(Utilities.isEpub(path)){
-		                    	
-		                    }
-		                }else if(!Utilities.isValideBook(path)){
-		                	makeText( "File is not a pdf/epub/txt");
-		                }
-	    
-						return b;
-					}
-					
-					private void makeText(final String msg){
-						runOnUiThread(new Runnable(){
+								@Override
+								protected PBook doInBackground(Void... params) {
+									// TODO Auto-generated method stub
 
-							@Override
-							public void run() {
-								// TODO Auto-generated method stub
-								Toast.makeText(NavigationalShelfListViewActivity.this, msg, Toast.LENGTH_SHORT).show();
-							}
-							
-						});
-					}
-					@Override
-					protected void onPostExecute(PBook result) {
-						// TODO Auto-generated method stub
-						super.onPostExecute(result);
-						if(result != null){
-							mShelfAdapter.addBook(result);
+									
+					                // Get the File path from the Uri
+					                
+					                PBook b = null;
+					                Log.i(TAG, "Path " + path);
+					                // Alternatively, use FileUtils.getFile(Context, Uri)
+					                if (path != null && isValideBook(path) && FileUtils.isLocal(path)) {
+					                    if(isPdf(path) && iHelper != null){
+					                    	Item i = new Item();
+					                    	i.setPath(path);
+					                    	iHelper.add(i);
+					                    	
+					                    	
+					                    	mDoc = new Document();
+					                    	int index = mDoc.Open(path, "");
+					 
+					                    	if( index == 0){
+						                    	String author = mDoc.GetMeta("Author");
+						                    	String title = mDoc.GetMeta("Title");
+						                    	String subject = mDoc.GetMeta("Subject");
+						                    	Log.i(TAG,"Meta " + author + " " + title + " " + subject);
+						                    	b = new PBook();
+						                    	b.setAuthor(author);
+						                    	b.setTitle(title);
+						                    	b.setPath(path);;
+						                    	Bitmap page0 = renderPage(mDoc);
+						                    	b.setPage0(page0);
+						                    	
+						                    	// we are not accepting file if the file doesnt give us the title
+						                    	
+						                    	if(title == null){
+						                    		makeText("File is invalid");
+						                    		b = null;
+						                    	}else if(title.equals("")){
+						                    		makeText("File is invalid");
+						                    		b = null;
+						                    	}
+						                    	
+					                    	}else if(index == -1){
+					                    		makeText("Password needed");
+					                    	}else if(index == -2){
+					                    		makeText("Unknown Encryption");
+					                    	}else if(index == -3){
+					                    		makeText("Damage or Invalid Format");
+					                    	}else if(index == -10){
+					                    		makeText("Access Denied");
+					                    	}
+					                    	
+					                    }else if(isEpub(path)){
+					                    	EpubReader epubReader = new EpubReader();
+					                    	Book epubBook = null;
+					                    	try {
+												epubBook = epubReader.readEpub(new FileInputStream(path));
+											} catch (FileNotFoundException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											} catch (IOException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+					                    	if(epubBook != null){
+					                    		b = new PBook();
+					                    		final String title = epubBook.getTitle();
+					                    		final String author = epubBook.getMetadata().getAuthors().get(0).toString();
+					                    		List<String> authors = new ArrayList<String>();
+					                    		for(Author auth : epubBook.getMetadata().getAuthors()){
+					                    			authors.add(auth.getFirstname() + " " + auth.getLastname());
+					                    		}
+					                    		
+					                    		b.setTitle(title);
+					                    		b.setAuthor(author);
+					                    		b.setAuthors(authors);
+					                    		b.setPath(path);
+					                    		Bitmap page0 = null;
+					                    		try {
+													page0 = BitmapFactory.decodeStream(epubBook.getCoverImage().getInputStream());
+												} catch (IOException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+					                    		if(page0 != null){
+					                    			b.setPage0(page0);
+					                    		}
+					                    	}
+					                    }
+					                }else if(!isValideBook(path)){
+					                	makeText( "File is not a pdf/epub/txt");
+					                }
+				    
+									return b;
+								}
+								
+								private void makeText(final String msg){
+									runOnUiThread(new Runnable(){
+
+										@Override
+										public void run() {
+											// TODO Auto-generated method stub
+											Toast.makeText(NavigationalShelfListViewActivity.this, msg, Toast.LENGTH_SHORT).show();
+										}
+										
+									});
+								}
+								@Override
+								protected void onPostExecute(PBook result) {
+									// TODO Auto-generated method stub
+									super.onPostExecute(result);
+									if(result != null){
+										mShelfAdapter.addBook(result);
+										bookCache.put(result.getPath(), result);
+									}
+									mProgress.dismiss();
+									dialog.dismiss();
+								}
+								
+								
+			            		
+			            	}.executeOnExecutor(mService, null,null,null);	
 						}
-						mProgress.dismiss();
-					}
-					
-					
+
+            		});
+            		builder.setNegativeButton("No", new OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							dialog.dismiss();
+						}
+            			
+            		});
             		
-            	}.executeOnExecutor(mService, null,null,null);
+            		final AlertDialog alert = builder.create();
+            		alert.show();
+            	}
+            	
 	        }
             break;
     }

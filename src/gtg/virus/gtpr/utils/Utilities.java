@@ -6,6 +6,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
@@ -36,6 +38,10 @@ public final class Utilities {
 	public final static String pdfPattern = "[a-zA-Z0-9,.-_]*.(pdf|epub|txt)";
 	
 	public final static String pdfSlashPattern = "[^!.]*.(pdf|epub|txt)";
+	
+	public final static Map<String , PBook> bookCache = new ConcurrentHashMap<String , PBook>();
+	
+	
 	/**
 	 * 
 	 * @param context

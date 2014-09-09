@@ -1,5 +1,6 @@
 package gtg.virus.gtpr.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -11,6 +12,8 @@ public class PBook {
 	private List<Page> pages;
 	
 	private String title = "NA";
+	
+	private List<String> authors;
 	
 	private String author = "NA";
 	
@@ -38,10 +41,12 @@ public class PBook {
 		this.path = path;
 		this.tag = tag;
 		this.page0 = frontPage;
+		this.authors = new ArrayList<String>();
 	}
 
 	public PBook() {
 		// TODO Auto-generated constructor stub
+		this.authors = new ArrayList<String>();
 	}
 
 	/**
@@ -120,6 +125,14 @@ public class PBook {
 
 	public void setPage0(Bitmap page0) {
 		this.page0 = page0;
+	}
+
+	public List<String> getAuthors() {
+		return authors;
+	}
+
+	public void setAuthors(List<String> authors) {
+		this.authors = authors;
 	}
 	
 
