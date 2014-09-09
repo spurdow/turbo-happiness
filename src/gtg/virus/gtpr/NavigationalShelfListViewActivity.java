@@ -23,6 +23,8 @@ import com.radaee.pdf.Global;
 import com.radaee.pdf.Matrix;
 import com.radaee.pdf.Page;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import gtg.virus.gtpr.adapters.ShelfAdapter;
 import gtg.virus.gtpr.adapters.TitleListAdapter;
 import gtg.virus.gtpr.async.AppLaunchTask;
@@ -177,7 +179,8 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 					}
 					
 				}else{
-					Toast.makeText(NavigationalShelfListViewActivity.this, "You dont have pdf's yet", Toast.LENGTH_LONG).show();
+					Crouton.makeText(NavigationalShelfListViewActivity.this, "You dont have pdf's yet", Style.INFO).show();
+					//Toast.makeText(NavigationalShelfListViewActivity.this, "You dont have pdf's yet", Toast.LENGTH_LONG).show();
 				}
 			}
 			
@@ -423,7 +426,8 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 										@Override
 										public void run() {
 											// TODO Auto-generated method stub
-											Toast.makeText(NavigationalShelfListViewActivity.this, msg, Toast.LENGTH_SHORT).show();
+											Crouton.makeText(NavigationalShelfListViewActivity.this, msg, Style.INFO).show();
+											//Toast.makeText(NavigationalShelfListViewActivity.this, msg, Toast.LENGTH_SHORT).show();
 										}
 										
 									});
@@ -589,7 +593,8 @@ public class NavigationalShelfListViewActivity extends ActionBarActivity {
 								@Override
 								public void run() {
 									// TODO Auto-generated method stub
-									Toast.makeText(NavigationalShelfListViewActivity.this, msg, Toast.LENGTH_SHORT).show();
+									//Toast.makeText(NavigationalShelfListViewActivity.this, msg, Toast.LENGTH_SHORT).show();
+									Crouton.makeText(NavigationalShelfListViewActivity.this, msg, Style.INFO).show();
 								}
 								
 							});
