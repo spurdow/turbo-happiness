@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import static gtg.virus.gtpr.utils.Utilities.*;
 
 public class GTGPdfViewer extends ActionBarActivity implements PDFReaderListener{
@@ -25,6 +26,9 @@ public class GTGPdfViewer extends ActionBarActivity implements PDFReaderListener
 	
 	private PDFReader mReader = null;
 	
+	private TextView mPageNo;
+	
+	private int mPageCount = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,7 @@ public class GTGPdfViewer extends ActionBarActivity implements PDFReaderListener
 		
 		mReader = (PDFReader) findViewById(R.id.pdf_reader_view);
 		
+		mPageNo = (TextView) findViewById(R.id.pdf_reader_pageno);
 		
 		Bundle extras = getIntent().getExtras();
 		if(extras != null){
@@ -51,6 +56,9 @@ public class GTGPdfViewer extends ActionBarActivity implements PDFReaderListener
 		mDoc.Open(mBook.getPath(), null);
 		mReader.PDFOpen(mDoc, false, this);
 		
+		mPageCount = mDoc.GetPageCount();
+		
+		mPageNo.setText("0/"+mPageCount);
 	}
 	
 	
@@ -80,6 +88,7 @@ public class GTGPdfViewer extends ActionBarActivity implements PDFReaderListener
 	public void OnPageChanged(int pageno) {
 		// TODO Auto-generated method stub
 		Log.i(TAG, "OnPageChanged " + pageno);
+		mPageNo.setText(pageno+"/"+mPageCount);
 	}
 
 	@Override
